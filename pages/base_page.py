@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import TimeoutException
@@ -10,7 +12,7 @@ class BasePage:
     # Данный о пользователе
     USER_INFO = {}
 
-    def __init__(self, driver):
+    def __init__(self, driver=None):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 10)
 
@@ -34,6 +36,7 @@ class BasePage:
         element = self.wait.until(EC.element_to_be_clickable(locator))
         for _ in range(times):
             element.click()
+            time.sleep(0.2)
 
     # Ввод текста по локатору
     def type_text(self, locator, text):

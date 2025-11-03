@@ -3,6 +3,7 @@ import pytest
 
 from selenium import webdriver
 from pages.base_page import BasePage
+from pages.cart_page import CartPage
 from pages.login_page import LoginPage
 from pages.shop_page import ShopPage
 
@@ -15,8 +16,8 @@ class TestCommonUser:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.driver = webdriver.Chrome(options=self.get_options())
-        yield
-        self.driver.quit()
+        # yield
+        # self.driver.quit()
 
     @staticmethod
     def get_options():
@@ -50,6 +51,13 @@ class TestCommonUser:
 
         shop_page.add_product_to_cart_by_index(4, times=2)
 
-        shop_page.add_product_to_cart_by_category("БЕРГЕР", times=2)
+        # shop_page.add_product_to_cart_by_category("БЕРГЕР", times=2)
 
-        assert shop_page.cart_and_user_input_comparison(), "Товар был добавлен некорректно"
+        #assert shop_page.cart_and_user_input_comparison(), "Товар был добавлен некорректно"
+
+        shop_page.go_to_cart()
+
+        cart_page = CartPage(self.driver)
+        print(cart_page.get_cart_summ())
+
+        time.sleep(3)

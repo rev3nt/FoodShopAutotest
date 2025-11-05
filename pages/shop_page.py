@@ -1,9 +1,11 @@
 import time
 
-from selenium.common import NoSuchElementException, ElementNotInteractableException
+from selenium.common import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
+
 from pages.base_page import BasePage
 
 
@@ -104,7 +106,7 @@ class ShopPage(BasePage):
 
         cart_amount = int(self.find_element(self.cart_amount_locator).text)
 
-        result_amount = cart_amount- self.initial_cart_count
+        result_amount = cart_amount - self.initial_cart_count
 
         print(f"Количество добавленных пользователем продуктов: {sum_of_user_inputs}")
         print(f"Количество товаров в корзине: {result_amount}")

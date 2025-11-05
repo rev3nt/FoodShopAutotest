@@ -16,8 +16,8 @@ class TestCommonUser:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.driver = webdriver.Chrome(options=self.get_options())
-        # yield
-        # self.driver.quit()
+        yield
+        self.driver.quit()
 
     @staticmethod
     def get_options():
@@ -55,9 +55,12 @@ class TestCommonUser:
 
         #assert shop_page.cart_and_user_input_comparison(), "Товар был добавлен некорректно"
 
+        # Сохраняем количество товара из корзины
+        cart_count = shop_page.get_cart_count()
+
         shop_page.go_to_cart()
 
         cart_page = CartPage(self.driver)
-        print(cart_page.get_cart_summ())
+        cart_page.check_all_products_stats()
 
         time.sleep(3)

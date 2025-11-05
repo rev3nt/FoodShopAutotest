@@ -31,6 +31,10 @@ class BasePage:
     def find_element(self, locator):
         return self.wait.until(EC.presence_of_element_located(locator))
 
+    # Возвращаем список элементов
+    def find_elements(self, locator):
+        return self.wait.until(EC.presence_of_all_elements_located(locator))
+
     # Клик на элемент, с ожидаем кликабельности, для удобства добавлена возможность нажимать несколько раз
     def click_on(self, locator, times=1):
         element = self.wait.until(EC.element_to_be_clickable(locator))

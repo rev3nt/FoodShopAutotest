@@ -19,5 +19,7 @@ class SuccessPage(BasePage):
 
         assert current_url == self.success_url
 
+        print("Заказ был успешно создан")
+
     def back_to_shop(self):
         self.click_on(self.back_to_shop_button_locator)

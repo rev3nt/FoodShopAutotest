@@ -1,5 +1,8 @@
+import time
+
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
+from faker import Faker
 
 
 class UserDataPage(BasePage):
@@ -14,18 +17,29 @@ class UserDataPage(BasePage):
 
     # Заполняем форму данными
     def input_user_data(self):
-
         # Находим поля и помещаем в них данные
-        self.type_text(self.name_locator, self.USER_INFO[0])
+        # name_locator = (By.XPATH, "//input[@placeholder='Имя']")
+        self.type_text(self.name_locator, self.USER_INFO['name'])
+        time.sleep(0.1)
 
-        self.type_text(self.surname_locator, self.USER_INFO[0]['surname'])
+        # surname_locator = (By.XPATH, "//input[@placeholder='Фамилия']")
+        self.type_text(self.surname_locator, self.USER_INFO['surname'])
+        time.sleep(0.1)
 
-        self.type_text(self.middle_name_locator, self.USER_INFO[0]['middle_name'])
+        # middle_name_locator = (By.XPATH, "//input[@placeholder='Отчество']")
+        self.type_text(self.middle_name_locator, self.USER_INFO['middle_name'])
+        time.sleep(0.1)
 
-        self.type_text(self.address_locator, self.USER_INFO[0]['address'])
+        # address_locator = (By.XPATH, "//input[@placeholder='Адрес доставки']")
+        self.type_text(self.address_locator, self.USER_INFO['address'])
+        time.sleep(0.1)
 
-        self.type_text(self.card_locator, self.USER_INFO[0]['card_number'])
+        # card_locator = (By.XPATH, "//input[@placeholder='Номер карты']")
+        self.type_text(self.card_locator, self.USER_INFO['card_number'])
+        time.sleep(0.1)
 
     # Нажимаем на кнопку подтверждения заказа
     def click_place_order_button(self):
+        # accept_button_locator = (By.XPATH, "//button[@type='submit']")
+
         self.click_on(self.accept_button_locator)

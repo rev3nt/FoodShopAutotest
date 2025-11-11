@@ -21,7 +21,7 @@ class CartPage(BasePage):
 
     # Функция для получения контейнера с карточками
     def get_all_product_cards(self):
-        product_cards_locator = (By.XPATH, "//div[contains(@class, 'store-card')]")
+        product_cards_locator = (By.XPATH, "//div[@class='store-card-container d-grid m-2']//div[contains(@class, 'store-card border rounded-1 overflow-hidden my-1')]")
 
         return self.find_elements(product_cards_locator)
 
@@ -69,21 +69,30 @@ class CartPage(BasePage):
     def check_all_products_stats(self):
         products_info = self.get_all_products_stats()
 
+        # Распаковываем данные по переменным
         for product_name, product_amount, product_price in products_info:
+            # Проверяем, есть ли данные
             if product_name is None:
                 continue
 
             try:
+                # Получаем референс от инпутов пользователя, на который будем ориентироваться
                 expected_info = self.PRODUCT_INFO[product_name]
-
+                # Если есть такой продукт, делаем проверку
                 if expected_info:
-                    assert product_amount == expected_info['amount']
+                    # Проверяем количество и цену
+                    assert int(product_amount) == expected_info['amount']
 
                     assert product_price == expected_info['price']
 
                     print(f'{product_name} успешно прошел проверку')
-            except AssertionError as e:
+            # В случае ошибок возвращаем False
+            except Exception as e:
                 print(f"Ошибка проверки для продукта '{product_name}': {e}")
+
+                return False
+
+        return True
 
     # Оформить заказ
     def place_order(self):

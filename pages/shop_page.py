@@ -122,3 +122,41 @@ class ShopPage(BasePage):
             select.select_by_value(value)
         except NoSuchElementException:
             print('Индекс за границами диапазона select')
+
+    # Функция для отчистки корзины
+    def clear_cart(self):
+        try:
+            # Переходим в корзину
+            self.click_on(self.cart_locator)
+            time.sleep(1)
+
+            # Локатор для кнопок удаления
+            remove_button_locator = (By.XPATH,
+                                     "//button[@class='btn btn-light btn-sm d-flex']//span[contains(text(), 'remove')]")
+
+            # Получаем все кнопки удаления
+            remove_buttons = self.find_elements(remove_button_locator)
+
+            print(f"Найдено товаров для удаления: {len(remove_buttons)}")
+
+            # Удаляем все товары по одному
+            while remove_buttons:
+                try:
+                    # Кликаем на первую кнопку удаления
+                    remove_buttons[0].click()
+                    time.sleep(0.2)
+
+                    # Обновляем список кнопок
+                    remove_buttons = self.find_elements(remove_button_locator, delay=0.2)
+                    print(f"Осталось товаров: {len(remove_buttons)}")
+
+                except Exception:
+                    break
+
+            print("Корзина очищена")
+
+            # Возвращаемся назад
+            self.driver.back()
+
+        except Exception as e:
+            print(f"Ошибка при очистке корзины: {e}")

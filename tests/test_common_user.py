@@ -79,7 +79,6 @@ class TestCommonUser:
         assert cart_page.check_all_products_stats()
 
         product_amount = base_page.get_product_amount()
-        product_summ = base_page.get_product_summ()
 
         # Сохраняем сумму
         cart_summ = cart_page.get_cart_summ()

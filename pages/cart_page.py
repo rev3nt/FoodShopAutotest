@@ -1,6 +1,5 @@
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.devtools.v140.dom import get_attributes
 
 from pages.base_page import BasePage
 
@@ -16,7 +15,7 @@ class CartPage(BasePage):
         result = self.find_element(self.cart_summ_locator).text
         # Вырезаем лишнее из строки, преобразуем в число для удобства
 
-        result = int(result.replace('Итого: ', '')[:-2])
+        result = float(result.replace('Итого: ', '')[:-2])
         return result
 
     # Функция для получения контейнера с карточками

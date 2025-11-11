@@ -142,14 +142,14 @@ class OrderAccept(BasePage):
         try:
             # Получаем количество и сумму товаров на странице
             amount = int(self.find_element(amount_locator).text.replace('Количество товаров: ', ''))
-            summ = int(self.find_element(summ_locator).text.replace('Итоговая стоимость: ', '').replace(' ₽', ''))
+            summ = float(self.find_element(summ_locator).text.replace('Итоговая стоимость: ', '').replace(' ₽', ''))
 
             # Проверяем соответствует ли это число изначальному количеству товара в корзине
             assert amount == cart_amount
 
             # Соответствует ли сумма в корзине сумме на странице подтверждения
             assert summ == cart_summ
-            print("Проверка прошла успешно")
+            print("Проверка по сумме и количеству товаров в заказе прошла успешно")
 
             return True
 

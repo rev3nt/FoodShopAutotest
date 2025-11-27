@@ -1,9 +1,8 @@
 import time
-from tabnanny import check
-
 import pytest
-
 from selenium import webdriver
+
+from pages.admin_page import AdminPage
 from pages.base_page import BasePage
 from pages.cart_page import CartPage
 from pages.login_page import LoginPage
@@ -117,3 +116,49 @@ class TestCommonUser:
         success_page.back_to_shop()
 
         print("Тест завершен")
+
+    def test_delete_item(self):
+        base_page = BasePage(self.driver)
+
+        base_page.generate_positive_user_date()
+
+        login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
+
+        login_page.open()
+
+        time.sleep(1)
+
+        login_page.login('admin', 'admin')
+
+        admin_page = AdminPage(self.driver)
+
+        admin_page.enter_admin_panel()
+
+        time.sleep(1)
+
+        admin_page.edit_item_by_id(1)
+
+        # admin_page.edit_item_by_name('Название')
+
+        admin_page.back_to_shop()
+
+        time.sleep(3)
+
+    def test_add_item(self):
+        base_page = BasePage(self.driver)
+
+        login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
+
+        login_page.open()
+
+        time.sleep(1)
+
+        login_page.login('admin', 'admin')
+
+        admin_page = AdminPage(self.driver)
+
+        admin_page.enter_admin_panel()
+
+        admin_page.add_item()
+
+        time.sleep(2)

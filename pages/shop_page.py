@@ -12,6 +12,8 @@ class ShopPage(BasePage):
     cart_locator = (By.XPATH, "//span[contains(text(), 'shopping_cart')]")
     select_locator = (By.XPATH, "//select[@aria-label='Выбор по умолчанию']")
     cart_amount_locator = (By.XPATH, "//span[contains(@class, 'cart-counter')]")
+    menu_locator = (By.XPATH, "//span[contains(text(), 'menu')]")
+    logout_locator = (By.XPATH, "//div[contains(text(), 'Выход')]")
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -143,7 +145,7 @@ class ShopPage(BasePage):
                 try:
                     # Кликаем на первую кнопку удаления
                     remove_buttons[0].click()
-                    time.sleep(0.2)
+                    time.sleep(0.1)
 
                     # Обновляем список кнопок
                     remove_buttons = self.find_elements(remove_button_locator, delay=0.2)
@@ -159,3 +161,11 @@ class ShopPage(BasePage):
 
         except Exception as e:
             print(f"Ошибка при очистке корзины: {e}")
+
+    # Функция для выхода из аккаунта пользователя
+    def logout(self):
+        self.click_on(self.menu_locator)
+
+        self.click_on(self.logout_locator)
+
+        print("Выход из аккаунта прошел успешно")

@@ -36,8 +36,8 @@ class BasePage:
         return WebDriverWait(self.driver, delay).until(EC.presence_of_all_elements_located(locator))
 
     # Клик на элемент, с ожидаем кликабельности, для удобства добавлена возможность нажимать несколько раз
-    def click_on(self, locator, times=1):
-        element = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(locator))
+    def click_on(self, locator, times=1, timeout=10):
+        element = WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(locator))
         for _ in range(times):
             element.click()
             time.sleep(0.2)
@@ -51,9 +51,9 @@ class BasePage:
         element.send_keys(text)
 
     # Функция, которая проверяет, находится ли элемент на видимом экране
-    def is_visible(self, locator):
+    def is_visible(self, locator, timeout=10):
         try:
-            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(locator))
+            WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
 
             return True
         except TimeoutException:

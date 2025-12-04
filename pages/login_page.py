@@ -36,4 +36,4 @@ class LoginPage(BasePage):
             print("Кнопка логина нажата(было вызвано исключение)")
 
     def assure_login(self):
-        return self.is_visible(self.shop_page_text_locator)
+        return self.is_visible(self.shop_page_text_locator, timeout=1)

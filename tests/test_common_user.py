@@ -31,16 +31,128 @@ class TestCommonUser:
 
         return options
 
-    def test_login(self):
+    def test_login_positive(self):
         login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
 
         login_page.open()
 
         login_page.login(self.LOGIN, self.PASSWORD)
 
-        assert login_page.assure_login(), "Пользователь не перешел на страницу магазина"
+        assert login_page.assure_login()
 
-        time.sleep(3)
+    def test_login_negative(self):
+        login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
+
+        login_page.open()
+
+        login_page.login('123', '123')
+
+        assert login_page.assure_login() == False
+
+    def test_login_empty(self):
+        login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
+
+        login_page.open()
+
+        login_page.login('', '')
+
+        assert login_page.assure_login() == False
+
+    def test_add_item_to_cart(self):
+        base_page = BasePage(self.driver)
+
+        login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
+
+        login_page.open()
+
+        login_page.login(self.LOGIN, self.PASSWORD)
+
+        assert login_page.assure_login()
+
+        shop_page = ShopPage(self.driver)
+
+        if shop_page.get_cart_count() != 0:
+            shop_page.clear_cart()
+            print('Почистил корзину')
+
+        assert shop_page.get_cart_count() == 0
+        print("Все кул")
+
+        shop_page.add_product_to_cart_by_index(1)
+        print("Добавил товар")
+
+        assert shop_page.get_cart_count() == 1
+        print("Все кул")
+
+        shop_page.go_to_cart()
+
+        cart_page = CartPage(self.driver)
+
+        # Проверяем товары на соответствие добавленным
+        assert cart_page.check_all_products_stats()
+
+    def test_cart_save_between_sessions(self):
+        base_page = BasePage(self.driver)
+
+        login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
+
+        login_page.open()
+
+        login_page.login(self.LOGIN, self.PASSWORD)
+
+        assert login_page.assure_login()
+
+        shop_page = ShopPage(self.driver)
+
+        if shop_page.get_cart_count() != 0:
+            shop_page.clear_cart()
+
+        assert shop_page.get_cart_count() == 0
+
+        shop_page.add_product_to_cart_by_index(1, times=3)
+
+        shop_page.add_product_to_cart_by_index(3, times=2)
+
+        shop_page.logout()
+
+        login_page.login(self.LOGIN, self.PASSWORD)
+
+        assert login_page.assure_login()
+
+        shop_page.go_to_cart()
+
+        cart_page = CartPage(self.driver)
+
+        # Проверяем товары на соответствие добавленным
+        assert cart_page.check_all_products_stats()
+
+    def test_order_more_then_100_items(self):
+        base_page = BasePage(self.driver)
+
+        login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
+
+        login_page.open()
+
+        login_page.login(self.LOGIN, self.PASSWORD)
+
+        assert login_page.assure_login()
+
+        shop_page = ShopPage(self.driver)
+
+        if shop_page.get_cart_count() != 0:
+            shop_page.clear_cart()
+
+        assert shop_page.get_cart_count() == 0
+
+        shop_page.add_product_to_cart_by_index(1, times=101)
+
+        shop_page.go_to_cart()
+
+        cart_page = CartPage(self.driver)
+
+        cart_page.place_order()
+
+        assert self.driver.current_url == 'http://91.197.96.80/cart'
 
     def test_create_order(self):
         base_page = BasePage(self.driver)

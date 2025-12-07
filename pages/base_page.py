@@ -15,7 +15,7 @@ class BasePage:
     def __init__(self, driver=None):
         self.driver = driver
 
-    # Функция для генерации пользовательских данных
+    # Функция для генерации пользовательских данных для позитивных тестов
     def generate_positive_user_date(self):
         faker = Faker("ru_RU")
 
@@ -25,6 +25,16 @@ class BasePage:
             'middle_name': faker.first_name(),
             'address': "ул. Тестовая, д. 1, кв. 1",
             'card_number': faker.credit_card_number()
+        })
+
+    # Функция для генерации пользовательских данных для негативных тестов
+    def generate_negative_user_date(self):
+        self.USER_INFO.update({
+            'name': '1',
+            'surname': '2',
+            'middle_name': ' ',
+            'address': "!@#",
+            'card_number': 'zxcv'
         })
 
     # Поиск элемента на странице

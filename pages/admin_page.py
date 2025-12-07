@@ -1,5 +1,6 @@
 import time
 
+import pytest
 from selenium.common import NoSuchElementException
 from selenium.webdriver import ActionChains
 
@@ -14,7 +15,7 @@ class AdminPage(BasePage):
     edit_price_locator = (By.XPATH, '//input[@placeholder="Цена"]')
     edit_url_locator = (By.XPATH, '//input[@placeholder="Image Source"]')
 
-    update_item_locator = (By.XPATH, '//button[contains(text(), "Обновить товар")]')
+    update_item_locator = (By.XPATH, '//button[contains(text(), " Обновить товар ")]')
     add_item_locator = (By.XPATH, '//button[contains(text(), "Добавить товар")]')
     create_item_button_locator = (By.XPATH, '//button[contains(text(), "Создать товар")]')
 
@@ -36,12 +37,12 @@ class AdminPage(BasePage):
 
     def delete_item_by_id(self, item_id):
         card_locator = (By.XPATH,
-                        f"//div[@class = 'store-container mx-auto']/div[{item_id}]")
+                        f"//div[@class='store-container mx-auto']/div[{item_id}]")
 
         try:
             product_card = self.find_element(card_locator)
         except NoSuchElementException:
-            print("Элемент с таким индексом не был найден на странице")
+            pytest.fail("Элемент с таким индексом не был найден на странице")
             return
 
         product_delete_button = product_card.find_element(By.XPATH, ".//button//span[contains(text(), 'delete')]")
@@ -51,7 +52,7 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(product_card).perform()
 
         except Exception:
-            print("Не удалось проскролить до элемента")
+            pytest.fail("Не удалось проскролить до элемента")
 
             return
 
@@ -61,7 +62,7 @@ class AdminPage(BasePage):
             print(f'Объект под номером {item_id} был удален')
 
         except Exception:
-            print("Не удалось нажать на кнопку удаления товара")
+            pytest.fail("Не удалось нажать на кнопку удаления товара")
 
     def delete_item_by_name(self, item_name):
         card_locator = (By.XPATH, f'//div[contains(text(), "{item_name}")]/ancestor::div[@role="button"]')
@@ -69,7 +70,7 @@ class AdminPage(BasePage):
         try:
             product_card = self.find_element(card_locator)
         except NoSuchElementException:
-            print('Карточка с таким названием не была найдена')
+            pytest.fail('Карточка с таким названием не была найдена')
 
             return
 
@@ -80,7 +81,7 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(product_card).perform()
 
         except Exception:
-            print('Не удалось проскролить до кнопки удаления')
+            pytest.fail('Не удалось проскролить до кнопки удаления')
 
         try:
             self.click_on(product_delete_button)
@@ -88,16 +89,17 @@ class AdminPage(BasePage):
             print(f'Объект под названием {item_name} был удален')
 
         except Exception:
-            print("Не удалось нажать на кнопку удаления товара")
+            pytest.fail("Не удалось нажать на кнопку удаления товара")
 
     def edit_item_by_id(self, item_id):
         card_locator = (By.XPATH,
-                        f"//div[@class = 'store-container mx-auto']/div[{item_id}]")
+                        f"//div[@class='store-container mx-auto']/div[{item_id}]")
 
         try:
             product_card = self.find_element(card_locator)
+
         except NoSuchElementException:
-            print("Элемент с таким индексом не был найден на странице")
+            pytest.fail("Элемент с таким индексом не был найден на странице")
             return
 
         product_edit_button = product_card.find_element(By.XPATH, ".//button//span[contains(text(), 'edit')]")
@@ -107,7 +109,7 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(product_card).perform()
 
         except Exception:
-            print("Не удалось проскролить до элемента")
+            pytest.fail("Не удалось проскролить до элемента")
 
             return
 
@@ -115,7 +117,7 @@ class AdminPage(BasePage):
             self.click_on(product_edit_button)
 
         except Exception:
-            print("Не удалось нажать на кнопку редактирования товара")
+            pytest.fail("Не удалось нажать на кнопку редактирования товара")
 
         time.sleep(1)
 
@@ -131,7 +133,7 @@ class AdminPage(BasePage):
             self.type_text(self.edit_url_locator, 'пофик')
 
         except Exception:
-            print('Не удалось вписать данные в поля')
+            pytest.fail('Не удалось вписать данные в поля')
 
         update_button = self.find_element(self.update_item_locator)
 
@@ -140,7 +142,7 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(product_card).perform()
 
         except Exception:
-            print('Не удалось проскролить до кнопки подтверждения редактирования')
+            pytest.fail('Не удалось проскролить до кнопки подтверждения редактирования')
 
         try:
             self.click_on(self.update_item_locator)
@@ -148,7 +150,7 @@ class AdminPage(BasePage):
             print(f'Объект под номером {item_id} был изменен')
 
         except Exception:
-            print("Не удалось нажать на кнопку подтверждения изменения товара")
+            pytest.fail("Не удалось нажать на кнопку подтверждения изменения товара")
 
     def edit_item_by_name(self, item_name):
         card_locator = (By.XPATH, f'//div[contains(text(), "{item_name}")]/ancestor::div[@role="button"]')
@@ -156,7 +158,7 @@ class AdminPage(BasePage):
         try:
             product_card = self.find_element(card_locator)
         except NoSuchElementException:
-            print("Элемент с таким индексом не был найден на странице")
+            pytest.fail("Элемент с таким индексом не был найден на странице")
             return
 
         product_edit_button = product_card.find_element(By.XPATH, ".//button//span[contains(text(), 'edit')]")
@@ -166,7 +168,7 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(product_card).perform()
 
         except Exception:
-            print("Не удалось проскролить до элемента")
+            pytest.fail("Не удалось проскролить до элемента")
 
             return
 
@@ -174,7 +176,7 @@ class AdminPage(BasePage):
             self.click_on(product_edit_button)
 
         except Exception:
-            print("Не удалось нажать на кнопку редактирования товара")
+            pytest.fail("Не удалось нажать на кнопку редактирования товара")
 
         time.sleep(1)
 
@@ -190,7 +192,7 @@ class AdminPage(BasePage):
             self.type_text(self.edit_url_locator, 'пофик 2.0')
 
         except Exception:
-            print('Не удалось вписать данные в поля')
+            pytest.fail('Не удалось вписать данные в поля')
 
         update_button = self.find_element(self.update_item_locator)
 
@@ -199,7 +201,7 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(product_card).perform()
 
         except Exception:
-            print('Не удалось проскролить до кнопки подтверждения редактирования')
+            pytest.fail('Не удалось проскролить до кнопки подтверждения редактирования')
 
         try:
             self.click_on(self.update_item_locator)
@@ -207,7 +209,7 @@ class AdminPage(BasePage):
             print(f'Товар под названием {item_name} был успешно изменен')
 
         except Exception:
-            print("Не удалось нажать на кнопку подтверждения изменения товара")
+            pytest.fail("Не удалось нажать на кнопку подтверждения изменения товара")
 
     def add_item(self):
         add_button = self.find_element(self.add_item_locator)
@@ -217,13 +219,13 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(add_button).perform()
 
         except Exception:
-            print('Не удалось проскролить до кнопки добавления товара')
+            pytest.fail('Не удалось проскролить до кнопки добавления товара')
 
         try:
             self.click_on(self.add_item_locator)
 
         except Exception:
-            print('Не удалось нажать на кнопку добавления')
+            pytest.fail('Не удалось нажать на кнопку добавления')
 
         try:
             self.type_text(self.edit_name_locator, 'Созданный товар')
@@ -237,7 +239,7 @@ class AdminPage(BasePage):
             self.type_text(self.edit_url_locator, 'https://avatars.mds.yandex.net/get-altay/13267750/2a00000190643b653e4ca3be15b45d7cd80f/L_height')
 
         except Exception:
-            print('Не удалось вписать данные в поля')
+            pytest.fail('Не удалось вписать данные в поля')
 
         create_button = self.find_element(self.create_item_button_locator)
 
@@ -246,13 +248,13 @@ class AdminPage(BasePage):
                 ActionChains(self.driver).scroll_to_element(create_button).perform()
 
         except Exception:
-            print("Не удалось проскролить до кнопки подтверждения создания товара")
+            pytest.fail("Не удалось проскролить до кнопки подтверждения создания товара")
 
         try:
             self.click_on(self.create_item_button_locator)
 
         except Exception:
-            print('Не удалось нажать на кнопку подтверждения создания товара')
+            pytest.fail('Не удалось нажать на кнопку подтверждения создания товара')
 
     def back_to_shop(self):
         shop_button_locator = (By.XPATH, '//a[@class="navbar-brand"]')
@@ -261,4 +263,4 @@ class AdminPage(BasePage):
             self.click_on(shop_button_locator)
 
         except Exception:
-            print("Не удалось нажать на кнопку возвращения в магазин")
+            pytest.fail("Не удалось нажать на кнопку возвращения в магазин")

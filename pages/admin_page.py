@@ -17,7 +17,7 @@ class AdminPage(BasePage):
 
     update_item_locator = (By.XPATH, '//button[contains(text(), " Обновить товар ")]')
     add_item_locator = (By.XPATH, '//button[contains(text(), "Добавить товар")]')
-    create_item_button_locator = (By.XPATH, '//button[contains(text(), "Создать товар")]')
+    create_item_button_locator = (By.XPATH, '//button[contains(text(), " Создать товар ")]')
 
     add_category_locator = (By.XPATH, '//input[@placeholder="Ожидаемая категория"]')
 
@@ -91,7 +91,7 @@ class AdminPage(BasePage):
         except Exception:
             pytest.fail("Не удалось нажать на кнопку удаления товара")
 
-    def edit_item_by_id(self, item_id):
+    def edit_item_by_id(self, item_id, name, description, category, price, photo_url):
         card_locator = (By.XPATH,
                         f"//div[@class='store-container mx-auto']/div[{item_id}]")
 
@@ -122,15 +122,15 @@ class AdminPage(BasePage):
         time.sleep(1)
 
         try:
-            self.type_text(self.edit_name_locator, 'Название')
+            self.type_text(self.edit_name_locator, name)
 
-            self.type_text(self.edit_description_locator, 'Описание')
+            self.type_text(self.edit_description_locator, description)
 
-            self.type_text(self.edit_category_locator, 'Категория')
+            self.type_text(self.edit_category_locator, category)
 
-            self.type_text(self.edit_price_locator, '220.56')
+            self.type_text(self.edit_price_locator, price)
 
-            self.type_text(self.edit_url_locator, 'пофик')
+            self.type_text(self.edit_url_locator, photo_url)
 
         except Exception:
             pytest.fail('Не удалось вписать данные в поля')
@@ -152,7 +152,7 @@ class AdminPage(BasePage):
         except Exception:
             pytest.fail("Не удалось нажать на кнопку подтверждения изменения товара")
 
-    def edit_item_by_name(self, item_name):
+    def edit_item_by_name(self, item_name, name, description, category, price, photo_url):
         card_locator = (By.XPATH, f'//div[contains(text(), "{item_name}")]/ancestor::div[@role="button"]')
 
         try:
@@ -181,15 +181,15 @@ class AdminPage(BasePage):
         time.sleep(1)
 
         try:
-            self.type_text(self.edit_name_locator, 'Название Новое')
+            self.type_text(self.edit_name_locator, name)
 
-            self.type_text(self.edit_description_locator, 'Описание Новое')
+            self.type_text(self.edit_description_locator, description)
 
-            self.type_text(self.edit_category_locator, 'Категория новая')
+            self.type_text(self.edit_category_locator, category)
 
-            self.type_text(self.edit_price_locator, '42')
+            self.type_text(self.edit_price_locator, price)
 
-            self.type_text(self.edit_url_locator, 'пофик 2.0')
+            self.type_text(self.edit_url_locator, photo_url)
 
         except Exception:
             pytest.fail('Не удалось вписать данные в поля')
@@ -211,7 +211,7 @@ class AdminPage(BasePage):
         except Exception:
             pytest.fail("Не удалось нажать на кнопку подтверждения изменения товара")
 
-    def add_item(self):
+    def add_item(self, name, description, category, price, photo_url):
         add_button = self.find_element(self.add_item_locator)
 
         try:
@@ -228,15 +228,15 @@ class AdminPage(BasePage):
             pytest.fail('Не удалось нажать на кнопку добавления')
 
         try:
-            self.type_text(self.edit_name_locator, 'Созданный товар')
+            self.type_text(self.edit_name_locator, name)
 
-            self.type_text(self.edit_description_locator, 'Описания для созданного товара')
+            self.type_text(self.edit_description_locator, description)
 
-            self.type_text(self.add_category_locator, 'Категория для нового товара')
+            self.type_text(self.add_category_locator, category)
 
-            self.type_text(self.edit_price_locator, '52.52')
+            self.type_text(self.edit_price_locator, price)
 
-            self.type_text(self.edit_url_locator, 'https://avatars.mds.yandex.net/get-altay/13267750/2a00000190643b653e4ca3be15b45d7cd80f/L_height')
+            self.type_text(self.edit_url_locator, photo_url)
 
         except Exception:
             pytest.fail('Не удалось вписать данные в поля')
@@ -252,6 +252,8 @@ class AdminPage(BasePage):
 
         try:
             self.click_on(self.create_item_button_locator)
+
+            print(f'Товар {name} успешно добавлен')
 
         except Exception:
             pytest.fail('Не удалось нажать на кнопку подтверждения создания товара')

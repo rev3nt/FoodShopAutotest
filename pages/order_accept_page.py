@@ -1,3 +1,4 @@
+import pytest
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
@@ -19,31 +20,39 @@ class OrderAccept(BasePage):
 
     # Функция для получения контейнера с карточками
     def get_all_product_cards(self):
-        product_cards_locator = (By.XPATH,
-                                 "//div[@class='store-container mx-auto']//div[contains(@class, 'store-card border overflow-hidden ms-2 my-1')]")
-
+        product_cards_locator = (
+            By.XPATH,
+            "//div[@class='store-container mx-auto']//div["
+            "contains(@class, 'store-card border overflow-hidden ms-2 my-1')]"
+        )
         return self.find_elements(product_cards_locator)
 
     # Функция для получения информации из карточки
     def get_product_info_from_card(self, product_card):
-        # Проверяем видна ли карточка с товаром на экране, если нет, то пытаемся скролить до нее
+        # Проверяем видна ли карточка с товаром на экране, 
+        # если нет, то пытаемся скроллить до нее
         if not product_card.is_displayed():
             try:
                 ActionChains(self.driver).scroll_to_element(product_card).perform()
             except Exception as e:
-                print(f"Скролл до элемента не возможен: {e}")
+                pytest.fail(f"Скролл до элемента невозможен: {e}")
                 return None
 
         # Получаем информацию о продукте из карточки
-        product_name = product_card.find_element(By.XPATH, ".//div[@class='card-title fs-6 text-success']").text
+        product_name = product_card.find_element(
+            By.XPATH, 
+            ".//div[@class='card-title fs-6 text-success']"
+        ).text
 
-        product_info = product_card.find_element(By.XPATH, ".//div[@class='fs-7 align-content-center text-nowrap mb-1']").text.split(" шт. по ")
+        product_info = product_card.find_element(
+            By.XPATH, 
+            ".//div[@class='fs-7 align-content-center text-nowrap mb-1']"
+        ).text.split(" шт. по ")
 
         product_amount = product_info[0]
-
         product_price = product_info[1]
 
-        return product_name,product_amount, product_price
+        return product_name, product_amount, product_price
 
     # Функция для получения информации из карточек
     def get_all_products_stats(self):
@@ -55,16 +64,16 @@ class OrderAccept(BasePage):
                 product_info = self.get_product_info_from_card(card)
                 if product_info:
                     products_info.append(product_info)
-
                     print(f'Карточка: {product_info}')
                 else:
-                    print("Не удалось получить информацию из карточки")
+                    pytest.fail("Не удалось получить информацию из карточки")
             except Exception as e:
-                print(e)
+                pytest.fail(f"Ошибка при обработке карточки: {e}")
 
         return products_info
 
-    # Проверяем все продукты из карточек на совпадение с информацией со словаря
+    # Проверяем все продукты из карточек на совпадение 
+    # с информацией из словаря
     def check_all_products_stats(self):
         products_info = self.get_all_products_stats()
 
@@ -75,26 +84,28 @@ class OrderAccept(BasePage):
                 continue
 
             try:
-                # Получаем референс от инпутов пользователя, на который будем ориентироваться
+                # Получаем референс от инпутов пользователя, 
+                # на который будем ориентироваться
                 expected_info = self.PRODUCT_INFO[product_name]
                 # Если есть такой продукт, делаем проверку
                 if expected_info:
                     # Проверяем количество и цену
                     assert int(product_amount) == expected_info['amount']
-
                     assert product_price == expected_info['price']
-
                     print(f'{product_name} успешно прошел проверку')
-            # В случае ошибок возвращаем False
+            # В случае ошибок проваливаем тест
+            except KeyError as e:
+                pytest.fail(f"Продукт '{product_name}' отсутствует в PRODUCT_INFO: {e}")
+            except AssertionError as e:
+                pytest.fail(f"Проверка для продукта '{product_name}' не прошла: {e}")
             except Exception as e:
-                print(f"Ошибка проверки для продукта '{product_name}': {e}")
-
-                return False
+                pytest.fail(f"Ошибка проверки для продукта '{product_name}': {e}")
 
         return True
 
     def get_user_info(self):
-        # Собираем всю необходимую для валидации страницы информацию и форматируем
+        # Собираем всю необходимую для валидации страницы информацию 
+        # и форматируем
         user_first_name = self.find_element(self.first_name_locator).text.replace('Имя: ', '')
         user_surname = self.find_element(self.surname_locator).text.replace('Фамилия: ', '')
         user_middle_name = self.find_element(self.middle_name_locator).text.replace('Отчество: ', '')
@@ -116,22 +127,17 @@ class OrderAccept(BasePage):
     def check_user_info(self):
         # Получаем информацию о пользователе со страницы
         user_info = self.get_user_info()
-
         expected_info = self.get_expected_user_info()
 
         if len(user_info) != len(expected_info):
-            print("Информация для проверки неполная или некорректная")
+            pytest.fail("Информация для проверки неполная или некорректная")
 
-            return False
-
-        for item in  range(len(user_info)):
+        for item in range(len(user_info)):
             try:
                 # Проходимся по списку с информацией и ищем совпадения
                 assert user_info[item] == expected_info[item]
-            except Exception:
-                print(f"Элемент {user_info[item]} не сходится с {expected_info[item]}")
-
-                return False
+            except AssertionError:
+                pytest.fail(f"Элемент '{user_info[item]}' не сходится с '{expected_info[item]}'")
 
         return True
 
@@ -146,17 +152,13 @@ class OrderAccept(BasePage):
 
             # Проверяем соответствует ли это число изначальному количеству товара в корзине
             assert amount == cart_amount
-
             # Соответствует ли сумма в корзине сумме на странице подтверждения
             assert summ == cart_summ
             print("Проверка по сумме и количеству товаров в заказе прошла успешно")
-
             return True
 
         except Exception as e:
-            print(f"Ошибка при попытке сравнить данные в корзине и на странице подтверждения: {e}")
-
-            return False
+            pytest.fail(f"Ошибка при попытке сравнить данные в корзине и на странице подтверждения: {e}")
 
     # Завершить оформление заказа
     def checkout(self):

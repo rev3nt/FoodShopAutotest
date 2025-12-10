@@ -1,5 +1,6 @@
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
+import pytest
 
 
 class SuccessPage(BasePage):
@@ -10,14 +11,18 @@ class SuccessPage(BasePage):
     success_url = "http://91.197.96.80/checkoutComplete"
 
     def assure_success(self):
+        # Проверка успешного создания заказа
         current_url = self.driver.current_url
         text = self.find_element(self.success_text_locator).text
 
-        assert text == self.success_text
+        if text != self.success_text:
+            pytest.fail(f"Текст не совпадает. Ожидалось: '{self.success_text}', получено: '{text}'")
 
-        assert current_url == self.success_url
+        if current_url != self.success_url:
+            pytest.fail(f"URL не совпадает. Ожидалось: '{self.success_url}', получено: '{current_url}'")
 
         print("Заказ был успешно создан")
 
     def back_to_shop(self):
+        # Возврат в магазин после успешного оформления заказа
         self.click_on(self.back_to_shop_button_locator)

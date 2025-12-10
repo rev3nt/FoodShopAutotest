@@ -1,7 +1,6 @@
 from selenium.common import StaleElementReferenceException
-
-from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
+from pages.base_page import BasePage
 
 
 class LoginPage(BasePage):
@@ -25,6 +24,7 @@ class LoginPage(BasePage):
         # Вводим логин и пароль
         self.type_text(self.username_locator, username)
         print("Введен логин")
+
         self.type_text(self.password_locator, password)
         print("Введен пароль")
 
@@ -35,5 +35,6 @@ class LoginPage(BasePage):
         except StaleElementReferenceException:
             print("Кнопка логина нажата(было вызвано исключение)")
 
+    # Функция для подтверждения успешности логина
     def assure_login(self):
         return self.is_visible(self.shop_page_text_locator, timeout=1)

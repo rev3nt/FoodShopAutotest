@@ -5,11 +5,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 
+
 class BasePage:
     # Данные о выбранном товаре
     PRODUCT_INFO = {}
 
-    # Данный о пользователе
+    # Данные о пользователе
     USER_INFO = {}
 
     def __init__(self, driver=None):
@@ -38,39 +39,49 @@ class BasePage:
         })
 
     # Поиск элемента на странице
-    def find_element(self, locator):
-        return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(locator))
+    def find_element(self, locator, wait_time=10):
+        return WebDriverWait(self.driver, wait_time).until(
+            EC.presence_of_element_located(locator)
+        )
 
     # Возвращаем список элементов
-    def find_elements(self, locator, delay=10):
-        return WebDriverWait(self.driver, delay).until(EC.presence_of_all_elements_located(locator))
+    def find_elements(self, locator, wait_time=10):
+        return WebDriverWait(self.driver, wait_time).until(
+            EC.presence_of_all_elements_located(locator)
+        )
 
-    # Клик на элемент, с ожидаем кликабельности, для удобства добавлена возможность нажимать несколько раз
+    # Клик на элемент, с ожиданием кликабельности, для удобства
+    # добавлена возможность нажимать несколько раз
     def click_on(self, locator, times=1, timeout=10):
-        element = WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(locator))
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable(locator)
+        )
         for _ in range(times):
             element.click()
             time.sleep(0.2)
 
     # Ввод текста по локатору
     def type_text(self, locator, text):
-        element = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(locator))
+        element = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(locator)
+        )
 
         element.clear()
-
         element.send_keys(text)
 
     # Функция, которая проверяет, находится ли элемент на видимом экране
     def is_visible(self, locator, timeout=10):
         try:
-            WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
-
+            WebDriverWait(self.driver, timeout).until(
+                EC.visibility_of_element_located(locator)
+            )
             return True
         except TimeoutException:
             print("Элемент не найден на странице")
-
             return False
 
+    # Возвращает количество товара, добавленного пользователем
+    # в корзину в рамках сессии
     def get_product_amount(self):
         result = 0
 
@@ -78,15 +89,17 @@ class BasePage:
             result += product_data['amount']
 
         print(f'Количество товаров, добавленных пользователем: {result}')
-
         return result
 
+    # Возвращает сумму товаров, добавленных пользователем
+    # в корзину в рамках сессии
     def get_product_summ(self):
         result = 0
 
         for product_name, product_data in self.PRODUCT_INFO.items():
-            result += float(product_data['price'].replace('₽', '').strip()) * product_data['amount']
+            result += float(
+                product_data['price'].replace('₽', '').strip()
+            ) * product_data['amount']
 
         print(f'Сумма товаров, добавленных пользователем: {result}')
-
         return result

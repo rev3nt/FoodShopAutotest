@@ -1,6 +1,7 @@
 import time
 import pytest
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 
 from pages.admin_page import AdminPage
 from pages.base_page import BasePage
@@ -33,7 +34,8 @@ class TestCommonUser:
         'description': 'Описания для созданного товара',
         'category': 'Категория для нового товара',
         'price': '52.52',
-        'photo_url': 'https://avatars.mds.yandex.net/get-altay/13267750/2a00000190643b653e4ca3be15b45d7cd80f/L_height'
+        'photo_url': 'https://avatars.mds.yandex.net/get-altay/13267750/'
+                     '2a00000190643b653e4ca3be15b45d7cd80f/L_height'
     }
 
     # Данные для редактирования товара
@@ -45,25 +47,99 @@ class TestCommonUser:
         'photo_url': 'пофик 2.0'
     }
 
-    # Фикстура для инициализации драйвера и сброса данных
+    @staticmethod
+    def get_chrome_driver():
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option("detach", True)
+        options.add_experimental_option(
+            "prefs", {"profile.password_manager_leak_detection": False}
+        )
+        options.add_argument('--headless')
+
+        driver = webdriver.Chrome(options=options)
+
+        return driver
+
+    @staticmethod
+    def get_firefox_driver():
+        profile = webdriver.FirefoxProfile()
+
+        profile.set_preference("browser.sessionstore.resume_from_crash", False)
+        profile.set_preference("browser.sessionstore.resume_session_once", True)
+        profile.set_preference("signon.leakDetections.enable", False)
+
+        options = webdriver.FirefoxOptions()
+        options.profile = profile
+        options.add_argument('--headless')
+
+        driver = webdriver.Firefox(options=options)
+
+        return driver
+
+    @staticmethod
+    def get_yandex_driver():
+        options = webdriver.ChromeOptions()
+
+        yandex_binary_path = (
+            r"C:\Users\user\AppData\Local\Yandex\YandexBrowser\Application"
+            r"\browser.exe"
+        )
+        options.binary_location = yandex_binary_path
+
+        options.add_experimental_option("detach", True)
+        options.add_experimental_option(
+            "prefs", {"profile.password_manager_leak_detection": False}
+        )
+        options.add_argument('--disable-notifications')
+        options.add_argument('--disable-background-networking')
+        options.add_argument('--headless')
+
+        # Необходимо установить яндекс драйвер на гитхабе для проведения
+        # тестов в Яндекс Браузере
+        service_path = (
+            r"C:\Program Files\yandexdriver-25.10.0.2474-win64"
+            r"\yandexdriver.exe"
+        )
+        service = Service(service_path)
+
+        driver = webdriver.Chrome(service=service, options=options)
+
+        return driver
+
+    @staticmethod
+    def get_edge_driver():
+        options = webdriver.EdgeOptions()
+
+        options.add_experimental_option("detach", True)
+        options.add_experimental_option(
+            "prefs", {"profile.password_manager_leak_detection": False}
+        )
+        options.add_argument('--headless')
+
+        driver = webdriver.Edge(options=options)
+
+        return driver
+
+    DRIVERS = {
+        'chrome': get_chrome_driver,
+        'firefox': get_firefox_driver,
+        'yandex': get_yandex_driver,
+        'edge': get_edge_driver
+    }
+
+    # Фикстура для инициализации драйвера и сброса данных о добавленных
+    # продуктах
     @pytest.fixture(autouse=True)
     def setup(self):
-        self.driver = webdriver.Chrome(options=self.get_options())
-
         BasePage.PRODUCT_INFO = {}
         BasePage.USER_INFO = {}
 
+        browser = 'chrome'
+
+        self.driver = self.DRIVERS[browser]()
+
         yield
         self.driver.quit()
-
-    @staticmethod
-    def get_options():
-        # Настройка опций браузера Chrome
-        options = webdriver.ChromeOptions()
-        options.add_experimental_option("detach", True)
-        options.add_experimental_option("prefs", {"profile.password_manager_leak_detection": False})
-
-        return options
 
     def test_login_positive(self):
         # Позитивный тест авторизации с корректными данными
@@ -222,7 +298,8 @@ class TestCommonUser:
         user_data_page.input_user_data()
         user_data_page.click_place_order_button()
 
-        # Проверяем, что остались на странице ввода данных (некорректные данные)
+        # Проверяем, что остались на странице ввода данных
+        # (некорректные данные)
         assert self.driver.current_url == self.CHECKOUT_PAGE_URL
 
     def test_skip_user_data_input(self):
@@ -252,7 +329,8 @@ class TestCommonUser:
         # Не заполняем форму, сразу нажимаем кнопку
         user_data_page.click_place_order_button()
 
-        # Проверяем, что остались на странице ввода данных (данные не заполнены)
+        # Проверяем, что остались на странице ввода данных
+        # (данные не заполнены)
         assert self.driver.current_url == self.CHECKOUT_PAGE_URL
 
     def test_data_validation_on_overview_page(self):
@@ -307,7 +385,9 @@ class TestCommonUser:
 
         # Проверяем данные на странице подтверждения заказа
         order_accept_page.check_all_products_stats()
-        order_accept_page.check_product_summary(cart_amount=cart_amount, cart_summ=cart_summ)
+        order_accept_page.check_product_summary(
+            cart_amount=cart_amount, cart_summ=cart_summ
+        )
         order_accept_page.check_user_info()
 
     def test_order_more_then_100_items(self):
@@ -424,7 +504,9 @@ class TestCommonUser:
         # Проверяем данные на странице подтверждения заказа
         order_accept_page.check_user_info()
         order_accept_page.check_all_products_stats()
-        order_accept_page.check_product_summary(cart_amount=cart_amount, cart_summ=cart_summ)
+        order_accept_page.check_product_summary(
+            cart_amount=cart_amount, cart_summ=cart_summ
+        )
 
         # Завершаем оформление заказа
         order_accept_page.checkout()
@@ -449,6 +531,10 @@ class TestCommonUser:
         admin_page.enter_admin_panel()
         admin_page.add_item(**self.CREATE_PRODUCT)
 
+        assert admin_page.assure_item_presence_in_panel(
+            self.CREATE_PRODUCT['name']
+        )
+
     def test_edit_item(self):
         # Тест редактирования товара (администратор)
         base_page = BasePage(self.driver)
@@ -461,7 +547,13 @@ class TestCommonUser:
         admin_page = AdminPage(self.driver)
 
         admin_page.enter_admin_panel()
-        admin_page.edit_item_by_name(self.CREATE_PRODUCT['name'], **self.EDIT_PRODUCT)
+        admin_page.edit_item_by_name(
+            self.CREATE_PRODUCT['name'], **self.EDIT_PRODUCT
+        )
+
+        assert admin_page.assure_item_presence_in_panel(
+            self.EDIT_PRODUCT['name']
+        )
 
     def test_delete_item(self):
         # Тест удаления товара (администратор)
@@ -478,6 +570,12 @@ class TestCommonUser:
 
         admin_page.enter_admin_panel()
         admin_page.delete_item_by_name(self.EDIT_PRODUCT['name'])
+
+        time.sleep(0.2)
+
+        assert not admin_page.assure_item_presence_in_panel(
+            self.EDIT_PRODUCT['name']
+        )
 
     def test_create_order_as_admin(self):
         # Тест создания заказа от имени администратора
@@ -531,7 +629,9 @@ class TestCommonUser:
         # Проверяем данные на странице подтверждения заказа
         order_accept_page.check_user_info()
         order_accept_page.check_all_products_stats()
-        order_accept_page.check_product_summary(cart_amount=cart_amount, cart_summ=cart_summ)
+        order_accept_page.check_product_summary(
+            cart_amount=cart_amount, cart_summ=cart_summ
+        )
 
         # Завершаем оформление заказа
         order_accept_page.checkout()

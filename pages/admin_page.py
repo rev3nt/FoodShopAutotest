@@ -1,7 +1,7 @@
 import time
 
 import pytest
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver import ActionChains
 
 from pages.base_page import BasePage
@@ -266,3 +266,17 @@ class AdminPage(BasePage):
 
         except Exception:
             pytest.fail("Не удалось нажать на кнопку возвращения в магазин")
+
+    # Функция для поиска продукта в админ панели
+    def assure_item_presence_in_panel(self, item_name):
+        product_name_locator = (By.XPATH, f'//div[@class="card-title fs-6 text-success" and contains(text(), "{item_name}")]')
+
+        try:
+            self.find_element(product_name_locator, wait_time=0.3)
+            print(f"Элемент {item_name} присутствует в админ панели")
+
+            return True
+        except TimeoutException:
+            print(f"Элемент {item_name} не обнаружен в админ панели")
+
+            return False

@@ -161,22 +161,19 @@ class ShopPage(BasePage):
 
         # Удаляем все товары по одному
         while remove_buttons:
-            try:
-                # Сохраняем текущую сумму
-                cart_summ = self.find_element(cart_summ_locator).text
+            # Сохраняем текущую сумму
+            cart_summ = self.find_element(cart_summ_locator).text
 
-                # Кликаем на первую кнопку удаления
-                remove_buttons[0].click()
-                time.sleep(0.1)
+            # Кликаем на первую кнопку удаления
+            remove_buttons[0].click()
+            time.sleep(0.1)
 
-                # Обновляем список кнопок
-                remove_buttons = self.find_elements(remove_button_locator, wait_time=0.1)
-                print(f"Осталось товаров: {len(remove_buttons)}")
+            # Обновляем список кнопок
+            remove_buttons = self.find_elements(remove_button_locator, wait_time=0.1)
+            print(f"Осталось товаров: {len(remove_buttons)}")
 
-                if self.find_element(cart_summ_locator).text == cart_summ:
-                    pytest.fail('Невозможно нажать на кнопку удаления')
-            except Exception:
-                break
+            if self.find_element(cart_summ_locator).text == cart_summ:
+                pytest.fail('Невозможно нажать на кнопку удаления')
 
         print("Корзина очищена")
         # Возвращаемся назад

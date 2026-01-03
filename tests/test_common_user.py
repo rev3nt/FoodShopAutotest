@@ -241,7 +241,7 @@ class TestCommonUser:
         # Позитивный тест ввода пользовательских данных
         base_page = BasePage(self.driver)
 
-        base_page.generate_positive_user_date()
+        base_page.generate_positive_user_data()
 
         login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
 
@@ -273,7 +273,7 @@ class TestCommonUser:
         # Негативный тест ввода пользовательских данных
         base_page = BasePage(self.driver)
 
-        base_page.generate_negative_user_date()
+        base_page.generate_negative_user_data()
 
         login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
 
@@ -337,7 +337,7 @@ class TestCommonUser:
         # Тест валидации данных на странице подтверждения заказа
         base_page = BasePage(self.driver)
 
-        base_page.generate_positive_user_date()
+        base_page.generate_positive_user_data()
 
         login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
 
@@ -456,7 +456,7 @@ class TestCommonUser:
         # Тест полного цикла создания заказа
         base_page = BasePage(self.driver)
 
-        base_page.generate_positive_user_date()
+        base_page.generate_positive_user_data()
 
         login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
 
@@ -559,7 +559,7 @@ class TestCommonUser:
         # Тест удаления товара (администратор)
         base_page = BasePage(self.driver)
 
-        base_page.generate_positive_user_date()
+        base_page.generate_positive_user_data()
 
         login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
 
@@ -581,7 +581,7 @@ class TestCommonUser:
         # Тест создания заказа от имени администратора
         base_page = BasePage(self.driver)
 
-        base_page.generate_positive_user_date()
+        base_page.generate_positive_user_data()
 
         login_page = LoginPage(self.LOGIN_PAGE_URL, self.driver)
 

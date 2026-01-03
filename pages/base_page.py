@@ -17,7 +17,7 @@ class BasePage:
         self.driver = driver
 
     # Функция для генерации пользовательских данных для позитивных тестов
-    def generate_positive_user_date(self):
+    def generate_positive_user_data(self):
         faker = Faker("ru_RU")
 
         self.USER_INFO.update({
@@ -29,7 +29,7 @@ class BasePage:
         })
 
     # Функция для генерации пользовательских данных для негативных тестов
-    def generate_negative_user_date(self):
+    def generate_negative_user_data(self):
         self.USER_INFO.update({
             'name': '1',
             'surname': '2',
